@@ -36,7 +36,6 @@ class FeatureEngineering:
         return self.data_table
     
     # Perform the PCA on the selected columns and return the explained variance.
-    # TODO still to fix per subject addition 
     def determine_pc_explained_variance_per_subject(self):
             
         for participant_id in range(1, 6):
@@ -46,10 +45,8 @@ class FeatureEngineering:
             pca = PCA(n_components = len(self.selected_predictor_cols))
             pca.fit(participant_data[self.selected_predictor_cols])
 
-            print(pca.explained_variance_ratio_)
-
-            # And return the explained variances.
-            return pca.explained_variance_ratio_
+            # print(pca.explained_variance_ratio_)
+            # print()
     
     # Apply a PCA per subject.
     def apply_pca_per_subject(self, number_comp):
@@ -69,21 +66,7 @@ class FeatureEngineering:
             new_values = self.pca.transform(participant_data[self.selected_predictor_cols])
 
             # Create empty columns to fill per participant
-            for comp in range(0, number_comp):
-                self.data_table['pca_' +str(comp+1)] = new_values[:,comp]
+            self.data_table.loc[self.data_table['participant_id'].eq(participant_id), 'pca_1'] = new_values[:, 0]
+            self.data_table.loc[self.data_table['participant_id'].eq(participant_id), 'pca_2'] = new_values[:, 1]
 
-            return self.data_table
-        
-
-import pandas as pd
-
-df = pd.read_csv('full_dataset.csv')
-
-FeEn = FeatureEngineering(df)
-
-FeEn.determine_pc_explained_variance_per_subject()
-
-
-
-
-    
+        return self.data_table
